@@ -42,7 +42,7 @@ export class CategoryDao implements IEntityRepository<Category> {
     .where(filter)
     .limit(pagination.limit)
     .offset(pagination.offset)
-    .sorting(sorting)
+    .sorting(...sorting.map(({ fieldName, order }) => ({ fieldName: `cat.${fieldName}`, order } as const)))
     .select({
       id: 'cat.id',
       name: 'cat.name',

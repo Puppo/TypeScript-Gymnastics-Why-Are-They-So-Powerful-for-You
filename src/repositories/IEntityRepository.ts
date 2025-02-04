@@ -15,8 +15,8 @@ export interface Pagination {
   offset: number;
 }
 type FirstLeverPropsSortable<T extends Entity> = {
-  [P in keyof T]: T[P] extends string | number | Date | boolean ? P : never;
-}[keyof T];
+  [P in keyof T as T[P] extends string | number | Date | boolean ? P : never]: T[P];
+};
 interface Sorting<T extends Entity> {
   fieldName: keyof FirstLeverPropsSortable<T>;
   order: 'asc' | 'desc';

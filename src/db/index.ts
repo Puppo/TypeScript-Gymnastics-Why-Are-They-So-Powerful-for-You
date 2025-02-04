@@ -2,8 +2,8 @@ import { CategoryTable } from "./tables/CategoryTable";
 import { PostTable } from "./tables/PostTable";
 
 export interface DbClient {
-  categories: QueryTable<AsResult<CategoryTable, 'categories'>>;
-  posts: QueryTable<AsResult<PostTable, 'posts'>>;
+  categories: QueryTable<CategoryTable>;
+  posts: QueryTable<PostTable>;
 }
 
 type WhereCondition<T> = {
@@ -16,8 +16,8 @@ type SelectResult<T, R extends Select<T>> = R extends (keyof T)[] ? Pick<T, R[nu
   [P in keyof R]: R[P] extends keyof T ? T[R[P]] : never;
 }
 type FirstLeverPropsSortable<T> = {
-  [P in keyof T]: T[P] extends string | number | Date | boolean ? P : never;
-}[keyof T];
+  [P in keyof T as T[P] extends string | number | Date | boolean ? P : never]: T[P];
+};
 
 interface Sorting<T> {
   fieldName: keyof FirstLeverPropsSortable<T>;
@@ -40,7 +40,7 @@ interface QueryTable<T> {
   delete: () => Promise<number>;
   limit: (limit: number) => QueryTable<T>;
   offset: (offset: number) => QueryTable<T>;
-  sorting: (fieldNameOrList: Sorting<T>['fieldName'] | SortingList<T>, order?: Sorting<T>['order']) => QueryTable<T>;
+  sorting: (...fields: SortingList<T>) => QueryTable<T>;
   innerJoin: <T2>(table: QueryTable<T2>, leftColumn: keyof T, rightColumn: keyof T2) => QueryTable<T & T2>;
   leftJoin: <T2>(table: QueryTable<T2>, leftColumn: keyof T, rightColumn: keyof T2) => QueryTable<T & T2>;
   as: <A extends string>(alias: A) => QueryTable<AsResult<T, A>>;
