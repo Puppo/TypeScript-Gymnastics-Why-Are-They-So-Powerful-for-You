@@ -37,4 +37,15 @@ describe('03-conditionals', () => {
 
     expectTypeOf<Parameters<typeof fn>>().toEqualTypeOf<[boolean]>();
   })
+
+  test('should infer from template literal', () => {
+    type ExtractColor<T> =
+      T extends `rgb(${infer R extends number}, ${infer G extends number}, ${infer B extends number})` ?
+        [R, G, B] :
+      never;
+    expectTypeOf<ExtractColor<`rgb(255, 255, 255)`>>().toEqualTypeOf<[255, 255, 255]>();
+    expectTypeOf<ExtractColor<`rgb(255, 0, 0)`>>().toEqualTypeOf<[255, 0, 0]>();
+    expectTypeOf<ExtractColor<'rgb(255, 0,0)'> >().toEqualTypeOf<never>();
+    expectTypeOf<ExtractColor<'rgb(255, 0, 0, 0, 0)'> >().toEqualTypeOf<never>();
+  })
 })

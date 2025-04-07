@@ -83,16 +83,4 @@ describe('04-looping', () => {
 
     expectTypeOf<Remove<[1, 2, 3, 4, 5], 2 | 5>>().toEqualTypeOf<[1, 3, 4]>();
   })
-
-  test('should infer from template literal', () => {
-    type ExtractColor<T> =
-      T extends `rgb(${infer R extends number}, ${infer G extends number}, ${infer B extends number})` ?
-        [R, G, B] :
-      never;
-    expectTypeOf<ExtractColor<`rgb(255, 255, 255)`>>().toEqualTypeOf<[255, 255, 255]>();
-    expectTypeOf<ExtractColor<`rgb(255, 0, 0)`>>().toEqualTypeOf<[255, 0, 0]>();
-    expectTypeOf<ExtractColor<'rgb(255, 0,0)'> >().toEqualTypeOf<never>();
-    expectTypeOf<ExtractColor<'rgb(255, 0, 0, 0, 0)'> >().toEqualTypeOf<never>();
-
-  })
 })
